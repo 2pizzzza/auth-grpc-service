@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package auth;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/2pizzzza/authGrpc/internal/auth_v1;auth_v1";
+
+service Auth{
+
+  rpc Login
+}
