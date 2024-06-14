@@ -40,7 +40,7 @@ func New(con *config.Config) (*DB, error) {
 }
 
 func ExecuteSQLFile(db *sql.DB) error {
-	content, err := os.ReadFile("storage/initbd.sql")
+	content, err := os.ReadFile("storage/init.sql")
 	if err != nil {
 		return err
 	}
