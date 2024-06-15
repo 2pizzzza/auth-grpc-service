@@ -86,7 +86,7 @@ func (s *Storage) UpdateUser(
 	ctx context.Context, id int64, newUsername, newEmail string) (models.User, error) {
 	const op = "postgres.user.UpdateUser"
 
-	stmt, err := s.Db.Prepare("UPDATE public.user SET username = &2, email = $3 WHERE id = $1")
+	stmt, err := s.Db.Prepare("UPDATE public.user SET password = &2 WHERE id = $1")
 
 	defer stmt.Close()
 
@@ -116,4 +116,32 @@ func (s *Storage) UpdateUser(
 	}
 
 	return user, nil
+}
+
+func (s *Storage) ChangePassword(ctx context.Context, id, newPassword string) (string, error) {
+	const op = "postgres.user.ChangePassword"
+	stmt, err := s.Db.Prepare("UPDATE public.user SET password = &2 WHERE id = $1")
+
+	defer stmt.Close()
+
+	if err != nil {
+		return "", fmt.Errorf("%s, %w", op, err)
+	}
+
+	res, err := stmt.Exec(id, newPassword)
+
+	if err != nil {
+		return "", fmt.Errorf("%s, %w", op, err)
+	}
+
+	rowAffected, err := res.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("%s, %w", op, err)
+	}
+
+	if rowAffected == 0 {
+		return "", storage.ErrUserNotFound
+	}
+
+	return "Success changed password", nil
 }
