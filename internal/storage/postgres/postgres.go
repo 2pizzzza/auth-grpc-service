@@ -11,11 +11,11 @@ import (
 	"os"
 )
 
-type DB struct {
+type Storage struct {
 	Db *sql.DB
 }
 
-func New(con *config.Config) (*DB, error) {
+func New(con *config.Config) (*Storage, error) {
 
 	conn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		con.Host, con.Port, con.Username, con.Database, con.Password)
@@ -34,7 +34,7 @@ func New(con *config.Config) (*DB, error) {
 		panic("good bye")
 	}
 
-	return &DB{
+	return &Storage{
 		Db: connDb,
 	}, nil
 }

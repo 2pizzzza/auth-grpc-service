@@ -1,6 +1,10 @@
 package service
 
-import "log/slog"
+import (
+	"context"
+	"github.com/2pizzzza/authGrpc/internal/domain/models"
+	"log/slog"
+)
 
 type AuthService struct {
 	log  *slog.Logger
@@ -8,6 +12,9 @@ type AuthService struct {
 }
 
 type AuthDb interface {
+	CreateUser(ctx context.Context, username, email, password string, isAdmin bool) (models.User, error)
+	GetUserById(ctx context.Context, id int64) (models.User, error)
+	UpdateUser(ctx context.Context, id int64, newUsername, newEmail string) (models.User, error)
 }
 
 func New(
