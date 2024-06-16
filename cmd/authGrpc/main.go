@@ -32,7 +32,7 @@ func main() {
 		log.Error("Failed connect db err: %s", sl.Err(err))
 	}
 
-	authService := service.New(log, db)
+	authService := service.New(log, db, env.JwtConn.TokenTTL, env.JwtConn.JwtSecret)
 	application := grpc.New(log, db.Db, authService, env)
 
 	go application.MustRun()

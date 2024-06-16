@@ -1,18 +1,20 @@
 package auth
 
 import (
+	"context"
 	"github.com/2pizzzza/authGrpc/internal/auth_v1"
 	"google.golang.org/grpc"
 )
 
-type AuthService interface {
+type Service interface {
+	Login(ctx context.Context, email, password string) (accessToken string, err error)
 }
 
 type ServerApi struct {
 	auth_v1.UnimplementedAuthServer
-	auth AuthService
+	auth Service
 }
 
-func Register(gRPC *grpc.Server, auth AuthService) {
+func Register(gRPC *grpc.Server, auth Service) {
 	auth_v1.RegisterAuthServer(gRPC, &ServerApi{auth: auth})
 }

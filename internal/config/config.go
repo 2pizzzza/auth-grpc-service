@@ -3,20 +3,34 @@ package config
 import (
 	"fmt"
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 type Config struct {
+	Env      string
+	DBConn   DatabaseConfig
+	GrpcConn GrpcConfig
+	JwtConn  JwtConfig
+}
+
+type DatabaseConfig struct {
 	Host     string
 	Port     int
 	Database string
 	Username string
 	Password string
-	Env      string
+}
+
+type GrpcConfig struct {
 	GrpcPort int
 	GrpcHost string
+}
+
+type JwtConfig struct {
+	TokenTTL  time.Duration
+	JwtSecret string
 }
 
 func NewConfig() (db *Config, err error) {
@@ -31,19 +45,36 @@ func NewConfig() (db *Config, err error) {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	dbname := os.Getenv("DB_NAME")
 	pass := os.Getenv("PASSWORD")
+
 	env := os.Getenv("ENV")
+
 	grpcHost := os.Getenv("GRPC_HOST")
 	grpcPort, _ := strconv.Atoi(os.Getenv("GRPC_PORT"))
-	log.Printf("Succses load env %s", pass)
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	tokenTTLStr := os.Getenv("TOKEN_TTl")
+
+	tokenTTL, err := time.ParseDuration(tokenTTLStr)
+	if err != nil {
+		panic(fmt.Sprintf("failed to parse TokenTLL: %s", err))
+	}
 
 	return &Config{
-		Host:     host,
-		Port:     port,
-		Database: dbname,
-		Username: pass,
-		Password: pass,
-		Env:      env,
-		GrpcPort: grpcPort,
-		GrpcHost: grpcHost,
+		Env: env,
+		DBConn: DatabaseConfig{
+			Host:     host,
+			Port:     port,
+			Database: dbname,
+			Username: pass,
+			Password: pass,
+		},
+		GrpcConn: GrpcConfig{
+			GrpcHost: grpcHost,
+			GrpcPort: grpcPort,
+		},
+		JwtConn: JwtConfig{
+			JwtSecret: jwtSecret,
+			TokenTTL:  tokenTTL,
+		},
 	}, nil
 }

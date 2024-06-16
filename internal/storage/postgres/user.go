@@ -43,6 +43,45 @@ func (s *Storage) CreateUser(
 	}, nil
 }
 
+func (s *Storage) GetUserByEmail(ctx context.Context, email string) (models.User, error) {
+	const op = "postgres.user.GetById"
+
+	var (
+		idTemp    int64
+		emailTemp string
+		username  string
+		isActive  bool
+		isAdmin   bool
+		createdAt time.Time
+	)
+
+	stmt, err := s.Db.Prepare("SELECT * FROM public.user WHERE email = $1")
+
+	defer stmt.Close()
+
+	if err != nil {
+		return models.User{}, fmt.Errorf("%s, %w", op, err)
+	}
+
+	err = stmt.QueryRow(email).Scan(&idTemp, &username, &emailTemp, &createdAt, &isActive, &isAdmin)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.User{}, storage.ErrUserNotFound
+		}
+		return models.User{}, fmt.Errorf("%s, %w", op, err)
+	}
+
+	return models.User{
+		Id:        idTemp,
+		Username:  username,
+		Email:     emailTemp,
+		CreatedAt: createdAt,
+		IsAdmin:   isAdmin,
+		IsActive:  isActive,
+	}, nil
+}
+
 func (s *Storage) GetUserById(ctx context.Context, id int64) (models.User, error) {
 	const op = "postgres.user.GetById"
 

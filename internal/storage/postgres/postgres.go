@@ -18,7 +18,7 @@ type Storage struct {
 func New(con *config.Config) (*Storage, error) {
 
 	conn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		con.Host, con.Port, con.Username, con.Database, con.Password)
+		con.DBConn.Host, con.DBConn.Port, con.DBConn.Username, con.DBConn.Database, con.DBConn.Password)
 
 	connDb, err := sql.Open("postgres", conn)
 

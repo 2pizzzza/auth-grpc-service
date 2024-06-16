@@ -19,15 +19,15 @@ type App struct {
 	host       string
 }
 
-func New(log *slog.Logger, db *sql.DB, authService auth.AuthService, cfg *config.Config) *App {
+func New(log *slog.Logger, db *sql.DB, authService auth.Service, cfg *config.Config) *App {
 	gRPCServer := grpc.NewServer()
 	auth.Register(gRPCServer, authService)
 	return &App{
 		log:        log,
 		gRPCServer: gRPCServer,
 		db:         db,
-		port:       cfg.GrpcPort,
-		host:       cfg.GrpcHost,
+		port:       cfg.GrpcConn.GrpcPort,
+		host:       cfg.GrpcConn.GrpcHost,
 	}
 }
 

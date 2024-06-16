@@ -23,7 +23,7 @@ message AuthResponse{
   string token = 1;
 }
 
-message Regis erRequest{
+message RegisterRequest{
   string username = 1;
   string email = 2;
   string password = 3;
