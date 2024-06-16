@@ -32,7 +32,7 @@ func main() {
 		log.Error("Failed connect db err: %s", sl.Err(err))
 	}
 
-	authService := service.New(log, db.Db)
+	authService := service.New(log, db)
 	application := grpc.New(log, db.Db, authService, env)
 
 	go application.MustRun()
