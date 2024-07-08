@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Storage) CreateUser(
-	ctx context.Context, username, email, password string, isAdmin bool) (models.User, error) {
+	ctx context.Context, username, email, password string) (models.User, error) {
 	const op = "postgres.user.CreateUser"
 
 	var (
@@ -24,9 +24,9 @@ func (s *Storage) CreateUser(
 	)
 
 	err := s.Db.QueryRow(""+
-		"INSERT INTO public.user (username, email, password, is_superuser) VALUES($1, &2, $3, $4) "+
+		"INSERT INTO public.user (username, email, password, is_superuser) VALUES($1, &2, $3) "+
 		"RETURNING id, username, email, is_active, is_superuser\n",
-		username, email, password, isAdmin).Scan(&id, &usernameTemp, &emailTemp, &isActive, &isAdminTemp)
+		username, email, password).Scan(&id, &usernameTemp, &emailTemp, &isActive)
 
 	if err != nil {
 		log.Printf("failed create user: %v op: %s", err, op)
@@ -57,7 +57,12 @@ func (s *Storage) GetUserByEmail(ctx context.Context, email string) (models.User
 
 	stmt, err := s.Db.Prepare("SELECT * FROM public.user WHERE email = $1")
 
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+
+		}
+	}(stmt)
 
 	if err != nil {
 		return models.User{}, fmt.Errorf("%s, %w", op, err)
@@ -96,7 +101,12 @@ func (s *Storage) GetUserById(ctx context.Context, id int64) (models.User, error
 
 	stmt, err := s.Db.Prepare("SELECT * FROM public.user WHERE id = $1")
 
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+
+		}
+	}(stmt)
 
 	if err != nil {
 		return models.User{}, fmt.Errorf("%s, %w", op, err)
@@ -127,7 +137,12 @@ func (s *Storage) UpdateUser(
 
 	stmt, err := s.Db.Prepare("UPDATE public.user SET password = &2 WHERE id = $1")
 
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+
+		}
+	}(stmt)
 
 	if err != nil {
 		return models.User{}, fmt.Errorf("%s, %w", op, err)
@@ -161,7 +176,12 @@ func (s *Storage) ChangePassword(ctx context.Context, id, newPassword string) (s
 	const op = "postgres.user.ChangePassword"
 	stmt, err := s.Db.Prepare("UPDATE public.user SET password = &2 WHERE id = $1")
 
-	defer stmt.Close()
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+
+		}
+	}(stmt)
 
 	if err != nil {
 		return "", fmt.Errorf("%s, %w", op, err)

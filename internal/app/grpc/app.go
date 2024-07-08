@@ -66,7 +66,12 @@ func (a *App) Stop() {
 	log := a.log.With(slog.String("op: ", op))
 	log.Info("stopping gRPC server", slog.Int("port", a.port))
 
-	defer a.db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(a.db)
 	log.Info("DB connection closed")
 
 	a.gRPCServer.GracefulStop()
