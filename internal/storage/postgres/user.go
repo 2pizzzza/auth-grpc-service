@@ -24,9 +24,9 @@ func (s *Storage) CreateUser(
 	)
 
 	err := s.Db.QueryRow(""+
-		"INSERT INTO public.user (username, email, password, is_superuser) VALUES($1, &2, $3) "+
+		"INSERT INTO public.user (username, email, password) VALUES($1, $2, $3) "+
 		"RETURNING id, username, email, is_active, is_superuser\n",
-		username, email, password).Scan(&id, &usernameTemp, &emailTemp, &isActive)
+		username, email, password).Scan(&id, &usernameTemp, &emailTemp, &isActive, &isAdminTemp)
 
 	if err != nil {
 		log.Printf("failed create user: %v op: %s", err, op)
