@@ -33,7 +33,7 @@ func New(con *config.Config) (*Storage, error) {
 		slog.Error("Failed create db", sl.Err(err))
 		panic("good bye")
 	}
-
+	
 	return &Storage{
 		Db: connDb,
 	}, nil
