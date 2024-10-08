@@ -1,10 +1,8 @@
 package main
 
 import (
-	"github.com/2pizzzza/authGrpc/internal/app/grpc"
 	"github.com/2pizzzza/authGrpc/internal/config"
 	"github.com/2pizzzza/authGrpc/internal/lib/logger/sl"
-	"github.com/2pizzzza/authGrpc/internal/service"
 	"github.com/2pizzzza/authGrpc/internal/storage/postgres"
 	"log/slog"
 	"os"
@@ -32,19 +30,7 @@ func main() {
 		log.Error("Failed connect db err: %s", sl.Err(err))
 	}
 
-	authService := service.New(log, db, env.JwtConn.TokenTTL, env.JwtConn.JwtSecret)
-	application := grpc.New(log, db.Db, authService, env)
-
-	go application.MustRun()
-	stop := make(chan os.Signal, 1)
-
-	sgnl := <-stop
-
-	log.Info("stopping application", slog.String("signal", sgnl.String()))
-
-	application.Stop()
-
-	log.Info("application stopped")
+	_ = db
 }
 
 func setupLogger(env string) *slog.Logger {

@@ -3,6 +3,7 @@ module github.com/2pizzzza/authGrpc
 go 1.22.3
 
 require (
+	github.com/bufbuild/protovalidate-go v0.6.2
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
@@ -14,7 +15,6 @@ require (
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
-	github.com/bufbuild/protovalidate-go v0.6.2 // indirect
 	github.com/google/cel-go v0.20.1 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
