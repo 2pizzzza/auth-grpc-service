@@ -33,7 +33,7 @@ type JwtConfig struct {
 	JwtSecret string
 }
 
-func NewConfig() (db *Config, err error) {
+func MustLoad() (db *Config, err error) {
 	err = godotenv.Load()
 
 	if err != nil {

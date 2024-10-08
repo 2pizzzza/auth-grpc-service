@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/2pizzzza/authGrpc/internal/config"
-	"github.com/2pizzzza/authGrpc/internal/lib/logger/sl"
-	"github.com/2pizzzza/authGrpc/internal/storage/postgres"
 	"log/slog"
 	"os"
+
+	"github.com/2pizzzza/authGrpc/internal/app"
+	"github.com/2pizzzza/authGrpc/internal/config"
+	"github.com/2pizzzza/authGrpc/internal/lib/logger/sl"
 )
 
 const (
@@ -16,21 +17,19 @@ const (
 
 func main() {
 
-	env, err := config.NewConfig()
+	cfg, err := config.MustLoad()
 
 	if err != nil {
 		slog.Error("Failed load env", sl.Err(err))
 	}
 
-	log := setupLogger(env.Env)
+	log := setupLogger(cfg.Env)
 
-	db, err := postgres.New(env)
+	log.Info("Starting Apllication")
 
-	if err != nil {
-		log.Error("Failed connect db err: %s", sl.Err(err))
-	}
+	application := app.New(log, cfg)
 
-	_ = db
+	application.GRPCserv.MustRun()
 }
 
 func setupLogger(env string) *slog.Logger {
