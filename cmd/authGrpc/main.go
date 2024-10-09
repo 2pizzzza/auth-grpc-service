@@ -3,6 +3,8 @@ package main
 import (
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/2pizzzza/authGrpc/internal/app"
 	"github.com/2pizzzza/authGrpc/internal/config"
@@ -29,7 +31,19 @@ func main() {
 
 	application := app.New(log, cfg)
 
-	application.GRPCserv.MustRun()
+	go application.GRPCserv.MustRun()
+
+	stop := make(chan os.Signal)
+
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	sign := <- stop
+
+	log.Info("stopping application", slog.String("signal:", sign.String()))
+
+	application.GRPCserv.Stop()
+
+	log.Info("Server is dead")
 }
 
 func setupLogger(env string) *slog.Logger {
