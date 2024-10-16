@@ -4,35 +4,36 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+
 	authrpc "github.com/2pizzzza/authGrpc/internal/grpc/auth"
 	"google.golang.org/grpc"
 )
 
-type App struct{
-	log *slog.Logger
+type App struct {
+	log        *slog.Logger
 	gRPCServer *grpc.Server
-	port int
+	port       int
 }
 
-func New(log *slog.Logger, port int) *App{
+func New(log *slog.Logger, port int) *App {
 	gRPCServer := grpc.NewServer()
 
 	authrpc.Register(gRPCServer)
 
 	return &App{
-		log: log,
+		log:        log,
 		gRPCServer: gRPCServer,
-		port: port,
+		port:       port,
 	}
 }
 
-func (a *App) MustRun(){
+func (a *App) MustRun() {
 	if err := a.Run(); err != nil {
 		panic(err)
 	}
 }
 
-func (a *App) Run() error{
+func (a *App) Run() error {
 	const op = "grpcapp.Run"
 
 	log := a.log.With(

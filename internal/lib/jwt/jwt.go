@@ -3,10 +3,11 @@ package jwt
 import (
 	"context"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"google.golang.org/grpc/metadata"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"google.golang.org/grpc/metadata"
 )
 
 type User interface {
